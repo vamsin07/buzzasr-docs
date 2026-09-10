@@ -1,8 +1,8 @@
 site_name: BuzzASR
 site_description: A short technical overview of BuzzASR, a set of 100+ monolingual Whisper-based ASR models for FLEURS languages.
-site_url: https://lemn-lab.github.io/buzzasr/
-repo_url: https://github.com/lemn-lab/buzzasr
-repo_name: lemn-lab/buzzasr
+site_url: https://lemn-lab.github.io/buzz-asr/
+repo_url: https://github.com/lemn-lab/buzz-asr
+repo_name: lemn-lab/buzz-asr
 edit_uri: edit/main/docs/
 copyright: In collaboration with EleutherAI
 

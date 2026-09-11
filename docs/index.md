@@ -8,6 +8,7 @@ hide:
 <p class="kicker">BuzzASR</p>
 <h1>100+ monolingual speech recognizers, one per language</h1>
 <p class="tag">We fine-tune Whisper-large-v3 into a separate model for each of 102 FLEURS languages, with two recipes: plain fine-tuning (SFT) and full fine-tuning with a native tokenizer (FFT). This site is a short technical overview of the project: the two recipes, why the tokenizer matters, and what the models achieve.</p>
+<p class="tag" style="margin-top:1rem"><strong><a href="https://arxiv.org/abs/2609.09554">Read the paper (arXiv)</a></strong> &nbsp;·&nbsp; <strong><a href="https://huggingface.co/BuzzASR">Get the models (Hugging Face)</a></strong> &nbsp;·&nbsp; <a href="https://github.com/lemn-lab/buzz-asr">Code</a></p>
 </div>
 
 <div class="stats">
@@ -57,13 +58,13 @@ FFT's advantage comes from its tokenizer. Whisper's tokenizer was built for Engl
 
 -   __Models__
 
-    Per-language weights on Hugging Face, released as they are finalized.
+    All 102 per-language weights are live on Hugging Face under the BuzzASR org.
 
     [Get the models →](models.md)
 
 </div>
 
-Model weights are being released on Hugging Face as the per-language models are finalized. See [Models](models.md).
+All 102 models are available now on Hugging Face under the [**BuzzASR** organization](https://huggingface.co/BuzzASR) — one model per language. See [Models](models.md).
 
 ## Acknowledgments
 
@@ -75,11 +76,17 @@ Developed in collaboration with [EleutherAI](https://www.eleuther.ai/), whose co
 
 ## Citation
 
+Paper: [arXiv:2609.09554](https://arxiv.org/abs/2609.09554) · Findings of EMNLP 2026.
+
 ```bibtex
-@misc{buzzasr,
-  title  = {BuzzASR: A Swarm of 100+ Monolingual Speech Recognition Models},
-  author = {Shivam Singh and Aditya Yadavalli and Catherine Arnett and Alex Warstadt},
-  year   = {2026},
-  note   = {Findings of the Association for Computational Linguistics: EMNLP 2026}
+@misc{buzzasr2026,
+  title         = {BuzzASR: A Swarm of 100+ Monolingual Speech Recognition Models},
+  author        = {Shivam Singh and Aditya Yadavalli and Catherine Arnett and Alex Warstadt},
+  year          = {2026},
+  eprint        = {2609.09554},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CL},
+  note          = {Findings of the Association for Computational Linguistics: EMNLP 2026},
+  url           = {https://arxiv.org/abs/2609.09554}
 }
 ```

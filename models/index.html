@@ -795,39 +795,660 @@
 
 
 <h1 id="models">Models<a class="headerlink" href="#models" title="Permanent link">&para;</a></h1>
-<p>We are releasing the trained models on Hugging Face as they are finalized, one model per language under the BuzzASR organization. This page links to each of them.</p>
-<div class="admonition info">
-<p class="admonition-title">Release in progress</p>
-<p>Weights are being uploaded as the final per-language models are ready. This page will fill in as they land, so check back for the full set.</p>
-</div>
+<p>All <strong>102</strong> BuzzASR models are released on Hugging Face under the
+<a href="https://huggingface.co/BuzzASR"><strong>BuzzASR</strong> organization</a> — one model per language,
+MIT-licensed. Each is a fine-tune of
+<a href="https://huggingface.co/openai/whisper-large-v3">openai/whisper-large-v3</a>, shipped as fp16
+safetensors, so it drops into any standard Whisper pipeline.</p>
 <h2 id="where-to-find-them">Where to find them<a class="headerlink" href="#where-to-find-them" title="Permanent link">&para;</a></h2>
-<p>All models live under the BuzzASR organization on Hugging Face, grouped in a single collection.</p>
-<blockquote>
-<p><strong>Collection:</strong> <em>link coming with the first release</em></p>
-</blockquote>
-<p>Each language has its own model, named by language and recipe, so you can pull just the one you need.</p>
+<ul>
+<li><strong>Organization:</strong> <a href="https://huggingface.co/BuzzASR">https://huggingface.co/BuzzASR</a></li>
+<li>Each language has its own repo, named by language, e.g.
+  <a href="https://huggingface.co/BuzzASR/finnish"><code>BuzzASR/finnish</code></a>,
+  <a href="https://huggingface.co/BuzzASR/mongolian"><code>BuzzASR/mongolian</code></a>.</li>
+<li>We release the <strong>best recipe per language</strong> (Simple/SFT or Full/FFT), chosen on validation —
+  never on the test set. The table below lists which recipe ships for each language.</li>
+</ul>
 <h2 id="using-a-model">Using a model<a class="headerlink" href="#using-a-model" title="Permanent link">&para;</a></h2>
-<p>Once a language is released, you can load it with the standard Whisper interface:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">WhisperForConditionalGeneration</span><span class="p">,</span> <span class="n">WhisperProcessor</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">name</span> <span class="o">=</span> <span class="s2">"buzzasr/&lt;model-name&gt;"</span>          <span class="c1"># e.g. the Finnish model</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">model</span> <span class="o">=</span> <span class="n">WhisperForConditionalGeneration</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">processor</span> <span class="o">=</span> <span class="n">WhisperProcessor</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span><span class="o">,</span><span class="w"> </span><span class="nn">torchaudio</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">WhisperForConditionalGeneration</span><span class="p">,</span> <span class="n">WhisperProcessor</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">name</span>  <span class="o">=</span> <span class="s2">"BuzzASR/finnish"</span>                        <span class="c1"># any language repo under the org</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">model</span> <span class="o">=</span> <span class="n">WhisperForConditionalGeneration</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">torch_dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float16</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"cuda"</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">proc</span>  <span class="o">=</span> <span class="n">WhisperProcessor</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="n">wav</span><span class="p">,</span> <span class="n">sr</span> <span class="o">=</span> <span class="n">torchaudio</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">"audio.wav"</span><span class="p">)</span>           <span class="c1"># 16 kHz mono</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">feats</span> <span class="o">=</span> <span class="n">proc</span><span class="p">(</span><span class="n">wav</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="mi">16000</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">"pt"</span><span class="p">)</span><span class="o">.</span><span class="n">input_features</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"cuda"</span><span class="p">)</span><span class="o">.</span><span class="n">half</span><span class="p">()</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="n">ids</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">feats</span><span class="p">,</span> <span class="n">num_beams</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">no_repeat_ngram_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">repetition_penalty</span><span class="o">=</span><span class="mf">1.2</span><span class="p">)</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="nb">print</span><span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">batch_decode</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">skip_special_tokens</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
 </span></code></pre></div>
+<p>The language/task prompt is baked into each model's generation config, so no <code>language=</code> argument
+is needed.</p>
 <h2 id="available-models">Available models<a class="headerlink" href="#available-models" title="Permanent link">&para;</a></h2>
+<p>🏆 marks the 27 languages where the model reaches the lowest CER of every open system we compare
+against (Whisper-large-v3, Omnilingual 1B/7B, MMS, Qwen3-ASR, Cohere) on the combined
+FLEURS + Common Voice test set.</p>
 <table>
 <thead>
 <tr>
 <th>Language</th>
 <th>Recipe</th>
-<th>Link</th>
+<th>Combined CER (%)</th>
+<th>Model</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><em>released models will be listed here</em></td>
-<td></td>
-<td></td>
+<td>Afrikaans</td>
+<td>Simple (SFT)</td>
+<td>5.35</td>
+<td><a href="https://huggingface.co/BuzzASR/afrikaans">BuzzASR/afrikaans</a></td>
+</tr>
+<tr>
+<td>Amharic</td>
+<td>Full (FFT)</td>
+<td>9.07</td>
+<td><a href="https://huggingface.co/BuzzASR/amharic">BuzzASR/amharic</a></td>
+</tr>
+<tr>
+<td>Arabic</td>
+<td>Simple (SFT)</td>
+<td>11.74</td>
+<td><a href="https://huggingface.co/BuzzASR/arabic">BuzzASR/arabic</a></td>
+</tr>
+<tr>
+<td>Armenian 🏆</td>
+<td>Full (FFT)</td>
+<td>2.28</td>
+<td><a href="https://huggingface.co/BuzzASR/armenian">BuzzASR/armenian</a></td>
+</tr>
+<tr>
+<td>Assamese</td>
+<td>Full (FFT)</td>
+<td>11.83</td>
+<td><a href="https://huggingface.co/BuzzASR/assamese">BuzzASR/assamese</a></td>
+</tr>
+<tr>
+<td>Asturian 🏆</td>
+<td>Simple (SFT)</td>
+<td>4.89</td>
+<td><a href="https://huggingface.co/BuzzASR/asturian">BuzzASR/asturian</a></td>
+</tr>
+<tr>
+<td>Azerbaijani</td>
+<td>Simple (SFT)</td>
+<td>5.22</td>
+<td><a href="https://huggingface.co/BuzzASR/azerbaijani">BuzzASR/azerbaijani</a></td>
+</tr>
+<tr>
+<td>Belarusian</td>
+<td>Simple (SFT)</td>
+<td>2.75</td>
+<td><a href="https://huggingface.co/BuzzASR/belarusian">BuzzASR/belarusian</a></td>
+</tr>
+<tr>
+<td>Bengali</td>
+<td>Full (FFT)</td>
+<td>7.79</td>
+<td><a href="https://huggingface.co/BuzzASR/bengali">BuzzASR/bengali</a></td>
+</tr>
+<tr>
+<td>Bosnian</td>
+<td>Simple (SFT)</td>
+<td>3.59</td>
+<td><a href="https://huggingface.co/BuzzASR/bosnian">BuzzASR/bosnian</a></td>
+</tr>
+<tr>
+<td>Bulgarian 🏆</td>
+<td>Simple (SFT)</td>
+<td>1.21</td>
+<td><a href="https://huggingface.co/BuzzASR/bulgarian">BuzzASR/bulgarian</a></td>
+</tr>
+<tr>
+<td>Burmese</td>
+<td>Full (FFT)</td>
+<td>24.01</td>
+<td><a href="https://huggingface.co/BuzzASR/burmese">BuzzASR/burmese</a></td>
+</tr>
+<tr>
+<td>Cantonese 🏆</td>
+<td>Simple (SFT)</td>
+<td>13.01</td>
+<td><a href="https://huggingface.co/BuzzASR/cantonese">BuzzASR/cantonese</a></td>
+</tr>
+<tr>
+<td>Catalan</td>
+<td>Full (FFT)</td>
+<td>4.21</td>
+<td><a href="https://huggingface.co/BuzzASR/catalan">BuzzASR/catalan</a></td>
+</tr>
+<tr>
+<td>Cebuano</td>
+<td>Simple (SFT)</td>
+<td>5.91</td>
+<td><a href="https://huggingface.co/BuzzASR/cebuano">BuzzASR/cebuano</a></td>
+</tr>
+<tr>
+<td>Croatian 🏆</td>
+<td>Simple (SFT)</td>
+<td>3.09</td>
+<td><a href="https://huggingface.co/BuzzASR/croatian">BuzzASR/croatian</a></td>
+</tr>
+<tr>
+<td>Czech</td>
+<td>Simple (SFT)</td>
+<td>3.41</td>
+<td><a href="https://huggingface.co/BuzzASR/czech">BuzzASR/czech</a></td>
+</tr>
+<tr>
+<td>Danish</td>
+<td>Full (FFT)</td>
+<td>14.90</td>
+<td><a href="https://huggingface.co/BuzzASR/danish">BuzzASR/danish</a></td>
+</tr>
+<tr>
+<td>Dutch 🏆</td>
+<td>Simple (SFT)</td>
+<td>1.49</td>
+<td><a href="https://huggingface.co/BuzzASR/dutch">BuzzASR/dutch</a></td>
+</tr>
+<tr>
+<td>English</td>
+<td>Full (FFT)</td>
+<td>4.39</td>
+<td><a href="https://huggingface.co/BuzzASR/english">BuzzASR/english</a></td>
+</tr>
+<tr>
+<td>Estonian 🏆</td>
+<td>Full (FFT)</td>
+<td>1.40</td>
+<td><a href="https://huggingface.co/BuzzASR/estonian">BuzzASR/estonian</a></td>
+</tr>
+<tr>
+<td>Filipino</td>
+<td>Simple (SFT)</td>
+<td>5.04</td>
+<td><a href="https://huggingface.co/BuzzASR/filipino">BuzzASR/filipino</a></td>
+</tr>
+<tr>
+<td>Finnish</td>
+<td>Full (FFT)</td>
+<td>28.96</td>
+<td><a href="https://huggingface.co/BuzzASR/finnish">BuzzASR/finnish</a></td>
+</tr>
+<tr>
+<td>French</td>
+<td>Full (FFT)</td>
+<td>6.68</td>
+<td><a href="https://huggingface.co/BuzzASR/french">BuzzASR/french</a></td>
+</tr>
+<tr>
+<td>Fulah</td>
+<td>Full (FFT)</td>
+<td>16.04</td>
+<td><a href="https://huggingface.co/BuzzASR/fulah">BuzzASR/fulah</a></td>
+</tr>
+<tr>
+<td>Galician 🏆</td>
+<td>Simple (SFT)</td>
+<td>1.48</td>
+<td><a href="https://huggingface.co/BuzzASR/galician">BuzzASR/galician</a></td>
+</tr>
+<tr>
+<td>Georgian</td>
+<td>Full (FFT)</td>
+<td>12.54</td>
+<td><a href="https://huggingface.co/BuzzASR/georgian">BuzzASR/georgian</a></td>
+</tr>
+<tr>
+<td>German</td>
+<td>Simple (SFT)</td>
+<td>3.20</td>
+<td><a href="https://huggingface.co/BuzzASR/german">BuzzASR/german</a></td>
+</tr>
+<tr>
+<td>Greek</td>
+<td>Simple (SFT)</td>
+<td>5.05</td>
+<td><a href="https://huggingface.co/BuzzASR/greek">BuzzASR/greek</a></td>
+</tr>
+<tr>
+<td>Gujarati</td>
+<td>Full (FFT)</td>
+<td>8.39</td>
+<td><a href="https://huggingface.co/BuzzASR/gujarati">BuzzASR/gujarati</a></td>
+</tr>
+<tr>
+<td>Hausa 🏆</td>
+<td>Simple (SFT)</td>
+<td>5.50</td>
+<td><a href="https://huggingface.co/BuzzASR/hausa">BuzzASR/hausa</a></td>
+</tr>
+<tr>
+<td>Hebrew 🏆</td>
+<td>Simple (SFT)</td>
+<td>10.89</td>
+<td><a href="https://huggingface.co/BuzzASR/hebrew">BuzzASR/hebrew</a></td>
+</tr>
+<tr>
+<td>Hindi</td>
+<td>Full (FFT)</td>
+<td>14.32</td>
+<td><a href="https://huggingface.co/BuzzASR/hindi">BuzzASR/hindi</a></td>
+</tr>
+<tr>
+<td>Hungarian</td>
+<td>Simple (SFT)</td>
+<td>2.68</td>
+<td><a href="https://huggingface.co/BuzzASR/hungarian">BuzzASR/hungarian</a></td>
+</tr>
+<tr>
+<td>Icelandic</td>
+<td>Full (FFT)</td>
+<td>7.45</td>
+<td><a href="https://huggingface.co/BuzzASR/icelandic">BuzzASR/icelandic</a></td>
+</tr>
+<tr>
+<td>Igbo</td>
+<td>Full (FFT)</td>
+<td>13.97</td>
+<td><a href="https://huggingface.co/BuzzASR/igbo">BuzzASR/igbo</a></td>
+</tr>
+<tr>
+<td>Indonesian</td>
+<td>Simple (SFT)</td>
+<td>2.63</td>
+<td><a href="https://huggingface.co/BuzzASR/indonesian">BuzzASR/indonesian</a></td>
+</tr>
+<tr>
+<td>Irish 🏆</td>
+<td>Simple (SFT)</td>
+<td>15.70</td>
+<td><a href="https://huggingface.co/BuzzASR/irish">BuzzASR/irish</a></td>
+</tr>
+<tr>
+<td>Italian</td>
+<td>Simple (SFT)</td>
+<td>2.86</td>
+<td><a href="https://huggingface.co/BuzzASR/italian">BuzzASR/italian</a></td>
+</tr>
+<tr>
+<td>Japanese 🏆</td>
+<td>Full (FFT)</td>
+<td>21.08</td>
+<td><a href="https://huggingface.co/BuzzASR/japanese">BuzzASR/japanese</a></td>
+</tr>
+<tr>
+<td>Javanese</td>
+<td>Simple (SFT)</td>
+<td>5.15</td>
+<td><a href="https://huggingface.co/BuzzASR/javanese">BuzzASR/javanese</a></td>
+</tr>
+<tr>
+<td>Kabuverdianu</td>
+<td>Simple (SFT)</td>
+<td>5.03</td>
+<td><a href="https://huggingface.co/BuzzASR/kabuverdianu">BuzzASR/kabuverdianu</a></td>
+</tr>
+<tr>
+<td>Kamba</td>
+<td>Simple (SFT)</td>
+<td>15.92</td>
+<td><a href="https://huggingface.co/BuzzASR/kamba">BuzzASR/kamba</a></td>
+</tr>
+<tr>
+<td>Kannada</td>
+<td>Full (FFT)</td>
+<td>10.29</td>
+<td><a href="https://huggingface.co/BuzzASR/kannada">BuzzASR/kannada</a></td>
+</tr>
+<tr>
+<td>Kazakh</td>
+<td>Full (FFT)</td>
+<td>7.47</td>
+<td><a href="https://huggingface.co/BuzzASR/kazakh">BuzzASR/kazakh</a></td>
+</tr>
+<tr>
+<td>Khmer</td>
+<td>Full (FFT)</td>
+<td>25.99</td>
+<td><a href="https://huggingface.co/BuzzASR/khmer">BuzzASR/khmer</a></td>
+</tr>
+<tr>
+<td>Korean 🏆</td>
+<td>Simple (SFT)</td>
+<td>4.61</td>
+<td><a href="https://huggingface.co/BuzzASR/korean">BuzzASR/korean</a></td>
+</tr>
+<tr>
+<td>Kyrgyz</td>
+<td>Simple (SFT)</td>
+<td>11.16</td>
+<td><a href="https://huggingface.co/BuzzASR/kyrgyz">BuzzASR/kyrgyz</a></td>
+</tr>
+<tr>
+<td>Lao</td>
+<td>Full (FFT)</td>
+<td>20.95</td>
+<td><a href="https://huggingface.co/BuzzASR/lao">BuzzASR/lao</a></td>
+</tr>
+<tr>
+<td>Latvian</td>
+<td>Simple (SFT)</td>
+<td>3.87</td>
+<td><a href="https://huggingface.co/BuzzASR/latvian">BuzzASR/latvian</a></td>
+</tr>
+<tr>
+<td>Lingala</td>
+<td>Simple (SFT)</td>
+<td>7.42</td>
+<td><a href="https://huggingface.co/BuzzASR/lingala">BuzzASR/lingala</a></td>
+</tr>
+<tr>
+<td>Lithuanian 🏆</td>
+<td>Simple (SFT)</td>
+<td>2.11</td>
+<td><a href="https://huggingface.co/BuzzASR/lithuanian">BuzzASR/lithuanian</a></td>
+</tr>
+<tr>
+<td>Luganda</td>
+<td>Simple (SFT)</td>
+<td>24.97</td>
+<td><a href="https://huggingface.co/BuzzASR/luganda">BuzzASR/luganda</a></td>
+</tr>
+<tr>
+<td>Luo</td>
+<td>Simple (SFT)</td>
+<td>76.92</td>
+<td><a href="https://huggingface.co/BuzzASR/luo">BuzzASR/luo</a></td>
+</tr>
+<tr>
+<td>Luxembourgish</td>
+<td>Full (FFT)</td>
+<td>8.55</td>
+<td><a href="https://huggingface.co/BuzzASR/luxembourgish">BuzzASR/luxembourgish</a></td>
+</tr>
+<tr>
+<td>Macedonian 🏆</td>
+<td>Simple (SFT)</td>
+<td>1.31</td>
+<td><a href="https://huggingface.co/BuzzASR/macedonian">BuzzASR/macedonian</a></td>
+</tr>
+<tr>
+<td>Malay</td>
+<td>Simple (SFT)</td>
+<td>2.64</td>
+<td><a href="https://huggingface.co/BuzzASR/malay">BuzzASR/malay</a></td>
+</tr>
+<tr>
+<td>Malayalam</td>
+<td>Full (FFT)</td>
+<td>15.38</td>
+<td><a href="https://huggingface.co/BuzzASR/malayalam">BuzzASR/malayalam</a></td>
+</tr>
+<tr>
+<td>Maltese 🏆</td>
+<td>Simple (SFT)</td>
+<td>2.66</td>
+<td><a href="https://huggingface.co/BuzzASR/maltese">BuzzASR/maltese</a></td>
+</tr>
+<tr>
+<td>Mandarin</td>
+<td>Full (FFT)</td>
+<td>19.17</td>
+<td><a href="https://huggingface.co/BuzzASR/mandarin">BuzzASR/mandarin</a></td>
+</tr>
+<tr>
+<td>Maori</td>
+<td>Full (FFT)</td>
+<td>10.06</td>
+<td><a href="https://huggingface.co/BuzzASR/maori">BuzzASR/maori</a></td>
+</tr>
+<tr>
+<td>Marathi</td>
+<td>Simple (SFT)</td>
+<td>49.19</td>
+<td><a href="https://huggingface.co/BuzzASR/marathi">BuzzASR/marathi</a></td>
+</tr>
+<tr>
+<td>Mongolian 🏆</td>
+<td>Full (FFT)</td>
+<td>5.21</td>
+<td><a href="https://huggingface.co/BuzzASR/mongolian">BuzzASR/mongolian</a></td>
+</tr>
+<tr>
+<td>Nepali</td>
+<td>Full (FFT)</td>
+<td>12.23</td>
+<td><a href="https://huggingface.co/BuzzASR/nepali">BuzzASR/nepali</a></td>
+</tr>
+<tr>
+<td>Northern Sotho</td>
+<td>Full (FFT)</td>
+<td>11.79</td>
+<td><a href="https://huggingface.co/BuzzASR/northern-sotho">BuzzASR/northern-sotho</a></td>
+</tr>
+<tr>
+<td>Norwegian 🏆</td>
+<td>Simple (SFT)</td>
+<td>2.78</td>
+<td><a href="https://huggingface.co/BuzzASR/norwegian">BuzzASR/norwegian</a></td>
+</tr>
+<tr>
+<td>Nyanja</td>
+<td>Full (FFT)</td>
+<td>10.99</td>
+<td><a href="https://huggingface.co/BuzzASR/nyanja">BuzzASR/nyanja</a></td>
+</tr>
+<tr>
+<td>Occitan 🏆</td>
+<td>Full (FFT)</td>
+<td>10.24</td>
+<td><a href="https://huggingface.co/BuzzASR/occitan">BuzzASR/occitan</a></td>
+</tr>
+<tr>
+<td>Oriya</td>
+<td>Full (FFT)</td>
+<td>16.33</td>
+<td><a href="https://huggingface.co/BuzzASR/oriya">BuzzASR/oriya</a></td>
+</tr>
+<tr>
+<td>Oromo</td>
+<td>Full (FFT)</td>
+<td>18.59</td>
+<td><a href="https://huggingface.co/BuzzASR/oromo">BuzzASR/oromo</a></td>
+</tr>
+<tr>
+<td>Pashto</td>
+<td>Simple (SFT)</td>
+<td>11.10</td>
+<td><a href="https://huggingface.co/BuzzASR/pashto">BuzzASR/pashto</a></td>
+</tr>
+<tr>
+<td>Persian 🏆</td>
+<td>Full (FFT)</td>
+<td>4.71</td>
+<td><a href="https://huggingface.co/BuzzASR/persian">BuzzASR/persian</a></td>
+</tr>
+<tr>
+<td>Polish</td>
+<td>Full (FFT)</td>
+<td>7.75</td>
+<td><a href="https://huggingface.co/BuzzASR/polish">BuzzASR/polish</a></td>
+</tr>
+<tr>
+<td>Portuguese</td>
+<td>Simple (SFT)</td>
+<td>3.65</td>
+<td><a href="https://huggingface.co/BuzzASR/portuguese">BuzzASR/portuguese</a></td>
+</tr>
+<tr>
+<td>Punjabi 🏆</td>
+<td>Full (FFT)</td>
+<td>8.84</td>
+<td><a href="https://huggingface.co/BuzzASR/punjabi">BuzzASR/punjabi</a></td>
+</tr>
+<tr>
+<td>Romanian</td>
+<td>Simple (SFT)</td>
+<td>3.12</td>
+<td><a href="https://huggingface.co/BuzzASR/romanian">BuzzASR/romanian</a></td>
+</tr>
+<tr>
+<td>Russian</td>
+<td>Simple (SFT)</td>
+<td>2.97</td>
+<td><a href="https://huggingface.co/BuzzASR/russian">BuzzASR/russian</a></td>
+</tr>
+<tr>
+<td>Serbian</td>
+<td>Full (FFT)</td>
+<td>60.85</td>
+<td><a href="https://huggingface.co/BuzzASR/serbian">BuzzASR/serbian</a></td>
+</tr>
+<tr>
+<td>Shona</td>
+<td>Simple (SFT)</td>
+<td>8.42</td>
+<td><a href="https://huggingface.co/BuzzASR/shona">BuzzASR/shona</a></td>
+</tr>
+<tr>
+<td>Sindhi</td>
+<td>Full (FFT)</td>
+<td>11.59</td>
+<td><a href="https://huggingface.co/BuzzASR/sindhi">BuzzASR/sindhi</a></td>
+</tr>
+<tr>
+<td>Slovak 🏆</td>
+<td>Full (FFT)</td>
+<td>2.19</td>
+<td><a href="https://huggingface.co/BuzzASR/slovak">BuzzASR/slovak</a></td>
+</tr>
+<tr>
+<td>Slovenian 🏆</td>
+<td>Simple (SFT)</td>
+<td>2.31</td>
+<td><a href="https://huggingface.co/BuzzASR/slovenian">BuzzASR/slovenian</a></td>
+</tr>
+<tr>
+<td>Somali</td>
+<td>Full (FFT)</td>
+<td>18.24</td>
+<td><a href="https://huggingface.co/BuzzASR/somali">BuzzASR/somali</a></td>
+</tr>
+<tr>
+<td>Sorani Kurdish</td>
+<td>Full (FFT)</td>
+<td>7.43</td>
+<td><a href="https://huggingface.co/BuzzASR/sorani-kurdish">BuzzASR/sorani-kurdish</a></td>
+</tr>
+<tr>
+<td>Spanish</td>
+<td>Simple (SFT)</td>
+<td>1.95</td>
+<td><a href="https://huggingface.co/BuzzASR/spanish">BuzzASR/spanish</a></td>
+</tr>
+<tr>
+<td>Swahili</td>
+<td>Full (FFT)</td>
+<td>12.69</td>
+<td><a href="https://huggingface.co/BuzzASR/swahili">BuzzASR/swahili</a></td>
+</tr>
+<tr>
+<td>Swedish 🏆</td>
+<td>Full (FFT)</td>
+<td>2.20</td>
+<td><a href="https://huggingface.co/BuzzASR/swedish">BuzzASR/swedish</a></td>
+</tr>
+<tr>
+<td>Tajik</td>
+<td>Simple (SFT)</td>
+<td>5.61</td>
+<td><a href="https://huggingface.co/BuzzASR/tajik">BuzzASR/tajik</a></td>
+</tr>
+<tr>
+<td>Tamil</td>
+<td>Simple (SFT)</td>
+<td>67.64</td>
+<td><a href="https://huggingface.co/BuzzASR/tamil">BuzzASR/tamil</a></td>
+</tr>
+<tr>
+<td>Telugu</td>
+<td>Full (FFT)</td>
+<td>13.03</td>
+<td><a href="https://huggingface.co/BuzzASR/telugu">BuzzASR/telugu</a></td>
+</tr>
+<tr>
+<td>Thai</td>
+<td>Simple (SFT)</td>
+<td>28.38</td>
+<td><a href="https://huggingface.co/BuzzASR/thai">BuzzASR/thai</a></td>
+</tr>
+<tr>
+<td>Turkish 🏆</td>
+<td>Simple (SFT)</td>
+<td>4.00</td>
+<td><a href="https://huggingface.co/BuzzASR/turkish">BuzzASR/turkish</a></td>
+</tr>
+<tr>
+<td>Ukrainian</td>
+<td>Simple (SFT)</td>
+<td>3.44</td>
+<td><a href="https://huggingface.co/BuzzASR/ukrainian">BuzzASR/ukrainian</a></td>
+</tr>
+<tr>
+<td>Umbundu</td>
+<td>Simple (SFT)</td>
+<td>19.91</td>
+<td><a href="https://huggingface.co/BuzzASR/umbundu">BuzzASR/umbundu</a></td>
+</tr>
+<tr>
+<td>Urdu</td>
+<td>Simple (SFT)</td>
+<td>9.24</td>
+<td><a href="https://huggingface.co/BuzzASR/urdu">BuzzASR/urdu</a></td>
+</tr>
+<tr>
+<td>Uzbek 🏆</td>
+<td>Simple (SFT)</td>
+<td>3.86</td>
+<td><a href="https://huggingface.co/BuzzASR/uzbek">BuzzASR/uzbek</a></td>
+</tr>
+<tr>
+<td>Vietnamese</td>
+<td>Simple (SFT)</td>
+<td>5.38</td>
+<td><a href="https://huggingface.co/BuzzASR/vietnamese">BuzzASR/vietnamese</a></td>
+</tr>
+<tr>
+<td>Welsh 🏆</td>
+<td>Full (FFT)</td>
+<td>5.24</td>
+<td><a href="https://huggingface.co/BuzzASR/welsh">BuzzASR/welsh</a></td>
+</tr>
+<tr>
+<td>Wolof</td>
+<td>Full (FFT)</td>
+<td>15.67</td>
+<td><a href="https://huggingface.co/BuzzASR/wolof">BuzzASR/wolof</a></td>
+</tr>
+<tr>
+<td>Xhosa</td>
+<td>Simple (SFT)</td>
+<td>11.48</td>
+<td><a href="https://huggingface.co/BuzzASR/xhosa">BuzzASR/xhosa</a></td>
+</tr>
+<tr>
+<td>Yoruba</td>
+<td>Full (FFT)</td>
+<td>23.67</td>
+<td><a href="https://huggingface.co/BuzzASR/yoruba">BuzzASR/yoruba</a></td>
+</tr>
+<tr>
+<td>Zulu</td>
+<td>Simple (SFT)</td>
+<td>11.86</td>
+<td><a href="https://huggingface.co/BuzzASR/zulu">BuzzASR/zulu</a></td>
 </tr>
 </tbody>
 </table>

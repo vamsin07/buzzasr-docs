@@ -824,6 +824,7 @@
 <p class="kicker">BuzzASR</p>
 <h1 id="100-monolingual-speech-recognizers-one-per-language">100+ monolingual speech recognizers, one per language<a class="headerlink" href="#100-monolingual-speech-recognizers-one-per-language" title="Permanent link">&para;</a></h1>
 <p class="tag">We fine-tune Whisper-large-v3 into a separate model for each of 102 FLEURS languages, with two recipes: plain fine-tuning (SFT) and full fine-tuning with a native tokenizer (FFT). This site is a short technical overview of the project: the two recipes, why the tokenizer matters, and what the models achieve.</p>
+<p class="tag" style="margin-top:1rem"><strong><a href="https://arxiv.org/abs/2609.09554">Read the paper (arXiv)</a></strong> &nbsp;·&nbsp; <strong><a href="https://huggingface.co/BuzzASR">Get the models (Hugging Face)</a></strong> &nbsp;·&nbsp; <a href="https://github.com/lemn-lab/buzz-asr">Code</a></p>
 </div>
 <div class="stats">
   <div class="stat"><div class="n">89 / 102</div><div class="l">languages where the best BuzzASR model beats Whisper-large-v3 zero-shot (FLEURS-test, CER)</div></div>
@@ -865,24 +866,29 @@
 </li>
 <li>
 <p><strong>Models</strong></p>
-<p>Per-language weights on Hugging Face, released as they are finalized.</p>
+<p>All 102 per-language weights are live on Hugging Face under the BuzzASR org.</p>
 <p><a href="models/">Get the models →</a></p>
 </li>
 </ul>
 </div>
-<p>Model weights are being released on Hugging Face as the per-language models are finalized. See <a href="models/">Models</a>.</p>
+<p>All 102 models are available now on Hugging Face under the <a href="https://huggingface.co/BuzzASR"><strong>BuzzASR</strong> organization</a> — one model per language. See <a href="models/">Models</a>.</p>
 <h2 id="acknowledgments">Acknowledgments<a class="headerlink" href="#acknowledgments" title="Permanent link">&para;</a></h2>
 <p>Developed in collaboration with <a href="https://www.eleuther.ai/">EleutherAI</a>, whose compute and support made these training runs possible.</p>
 <p><a class="collab" href="https://www.eleuther.ai/" target="_blank" rel="noopener" title="EleutherAI">
   <img src="assets/eleutherai.png" alt="EleutherAI logo" loading="lazy" />
 </a></p>
 <h2 id="citation">Citation<a class="headerlink" href="#citation" title="Permanent link">&para;</a></h2>
-<div class="language-bibtex highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nc">@misc</span><span class="p">{</span><span class="nl">buzzasr</span><span class="p">,</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="na">title</span><span class="w">  </span><span class="p">=</span><span class="w"> </span><span class="s">{BuzzASR: A Swarm of 100+ Monolingual Speech Recognition Models}</span><span class="p">,</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="na">author</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Shivam Singh and Aditya Yadavalli and Catherine Arnett and Alex Warstadt}</span><span class="p">,</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="na">year</span><span class="w">   </span><span class="p">=</span><span class="w"> </span><span class="s">{2026}</span><span class="p">,</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="na">note</span><span class="w">   </span><span class="p">=</span><span class="w"> </span><span class="s">{Findings of the Association for Computational Linguistics: EMNLP 2026}</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">}</span>
+<p>Paper: <a href="https://arxiv.org/abs/2609.09554">arXiv:2609.09554</a> · Findings of EMNLP 2026.</p>
+<div class="language-bibtex highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nc">@misc</span><span class="p">{</span><span class="nl">buzzasr2026</span><span class="p">,</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="na">title</span><span class="w">         </span><span class="p">=</span><span class="w"> </span><span class="s">{BuzzASR: A Swarm of 100+ Monolingual Speech Recognition Models}</span><span class="p">,</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="na">author</span><span class="w">        </span><span class="p">=</span><span class="w"> </span><span class="s">{Shivam Singh and Aditya Yadavalli and Catherine Arnett and Alex Warstadt}</span><span class="p">,</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="na">year</span><span class="w">          </span><span class="p">=</span><span class="w"> </span><span class="s">{2026}</span><span class="p">,</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="na">eprint</span><span class="w">        </span><span class="p">=</span><span class="w"> </span><span class="s">{2609.09554}</span><span class="p">,</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="na">archivePrefix</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{arXiv}</span><span class="p">,</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="na">primaryClass</span><span class="w">  </span><span class="p">=</span><span class="w"> </span><span class="s">{cs.CL}</span><span class="p">,</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="na">note</span><span class="w">          </span><span class="p">=</span><span class="w"> </span><span class="s">{Findings of the Association for Computational Linguistics: EMNLP 2026}</span><span class="p">,</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="na">url</span><span class="w">           </span><span class="p">=</span><span class="w"> </span><span class="s">{https://arxiv.org/abs/2609.09554}</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">}</span>
 </span></code></pre></div>
 
 
